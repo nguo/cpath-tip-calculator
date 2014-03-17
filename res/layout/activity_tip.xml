@@ -118,52 +118,58 @@
 			android:layout_alignParentRight="false"
 			>
 		<TableRow
+				android:paddingBottom="3dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" >
 
 			<TextView
+					android:textSize="25sp"
 					android:id="@+id/tvPreTipAmountDesc"
 					android:text="@string/pretip_amount" />
 
 			<TextView
+					android:textSize="25sp"
 					android:id="@+id/tvPreTipAmountNum"
 					android:minWidth="80dp"
-					android:layout_marginRight="10dp"
 					android:gravity="right"
 					android:text="@string/zero_value"
 					/>
 		</TableRow>
 
 		<TableRow
+				android:paddingBottom="3dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" >
 
 			<TextView
+					android:textSize="25sp"
 					android:id="@+id/tvTipAmountDesc"
 					android:text="@string/tip_amount" />
 
 			<TextView
+					android:textSize="25sp"
 					android:id="@+id/tvTipAmountNum"
 					android:minWidth="80dp"
 					android:text="@string/zero_value"
-					android:layout_marginRight="10dp"
 					android:gravity="right"
 					/>
 		</TableRow>
 
 		<TableRow
+				android:paddingBottom="3dp"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" >
 
 			<TextView
+					android:textSize="25sp"
 					android:id="@+id/tvTotalAmountDesc"
 					android:text="@string/total_price" />
 
 			<TextView
+					android:textSize="25sp"
 					android:id="@+id/tvTotalAmountNum"
 					android:text="@string/zero_value"
 					android:minWidth="80dp"
-					android:layout_marginRight="10dp"
 					android:gravity="right"/>
 		</TableRow>
 

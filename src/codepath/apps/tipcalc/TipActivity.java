@@ -1,6 +1,7 @@
 package codepath.apps.tipcalc;
 
 import android.app.Activity;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -16,6 +17,8 @@ import java.text.DecimalFormat;
 public class TipActivity extends Activity {
 	/** text of the radio button that chooses custom percentage */
 	static final String CUSTOM_PERCENTAGE = "Custom";
+	/** the path for the font used to show the final calculated values */
+	static final String FINAL_VALUES_FONT_PATH = "fonts/merchant.ttf";
 
 	/** seek bar for selecting custom percentage */
 	SeekBar seekBar;
@@ -62,6 +65,9 @@ public class TipActivity extends Activity {
 		setupSeekBarListener();
 		setupPreTipTextField();
 		setRadioGroupListener();
+
+		// set text face
+		setupTextTypeFace();
 	}
 
 	@Override
@@ -159,10 +165,22 @@ public class TipActivity extends Activity {
 		return radioButton.getText().toString().split("%")[0];
 	}
 
+	/** Toggles visible/enable properties of all elements associated with the seek bar */
 	private void toggleSeekBarElts(Boolean enable) {
 		int visibility = enable ? View.VISIBLE : View.INVISIBLE;
 		llSeekBar.setEnabled(enable);
 		llSeekBar.setVisibility(visibility);
 		tvSeekBarAmount.setVisibility(visibility);
+	}
+
+	private void setupTextTypeFace() {
+		Typeface face= Typeface.createFromAsset(getAssets(), FINAL_VALUES_FONT_PATH);
+
+		tvPreTipAmount.setTypeface(face);
+		tvTipAmount.setTypeface(face);
+		tvTotalAmount.setTypeface(face);
+		((TextView) findViewById(R.id.tvPreTipAmountDesc)).setTypeface(face);
+		((TextView) findViewById(R.id.tvTipAmountDesc)).setTypeface(face);
+		((TextView) findViewById(R.id.tvTotalAmountDesc)).setTypeface(face);
 	}
 }

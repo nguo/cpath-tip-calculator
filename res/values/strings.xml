@@ -13,9 +13,9 @@
 	<string name="min_cust_percent">0</string>
 	<string name="max_cust_percent">50</string>
 	<string name="percent_0">0%</string>
-	<string name="pretip_amount">Pre-Tip Amount:</string>
-	<string name="tip_amount">Tip Amount:</string>
-	<string name="total_price">Total:</string>
+	<string name="pretip_amount">Pre-Tip Amount</string>
+	<string name="tip_amount">Tip Amount</string>
+	<string name="total_price">Total</string>
 	<string name="zero_value">0.00</string>
 
 </resources>
