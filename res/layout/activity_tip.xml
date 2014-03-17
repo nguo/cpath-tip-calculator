@@ -3,36 +3,88 @@
     android:layout_height="match_parent"
 	android:focusable="false">
 
-    <TextView
-        android:id="@+id/tvHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-		android:text="@string/amount"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+	<TableLayout
+		android:orientation="vertical"
+		android:id="@+id/tlFinalValues"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
-		android:layout_alignParentTop="true"
-		android:layout_marginTop="10dp"/>
+		android:layout_marginTop="10dp"
+		android:paddingLeft="15dp"
+		android:paddingRight="20dp"
+		android:layout_alignParentTop="true" >
+		<TableRow
+			android:paddingBottom="3dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" >
 
-    <EditText
-        android:id="@+id/etPreTip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvHeader"
-        android:layout_centerHorizontal="true"
-        android:ems="10"
-        android:hint="@string/amt_field_hint"
-        android:inputType="numberDecimal" >
+			<TextView
+				android:id="@+id/tvPreTipAmountDesc"
+				android:text="@string/pretip_amount"
+				android:layout_weight="1" />
 
-        <requestFocus />
-    </EditText>
+			<EditText
+				android:id="@+id/etPreTip"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/amt_field_hint"
+				android:inputType="numberDecimal"
+				android:minWidth="80dp"
+				android:layout_weight="1"
+				android:gravity="right">
+				<requestFocus />
+			</EditText>
+		</TableRow>
+
+		<TableRow
+			android:paddingBottom="3dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" >
+
+			<TextView
+				android:id="@+id/tvTipAmountDesc"
+				android:text="@string/tip_amount"
+				android:layout_width="match_parent"
+				android:layout_weight="1" />
+
+			<TextView
+				android:id="@+id/tvTipAmountNum"
+				android:text="@string/zero_value"
+				android:layout_width="match_parent"
+				android:gravity="right"
+				android:layout_weight="1" />
+		</TableRow>
+
+		<TableRow
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" >
+
+			<TextView
+				android:textStyle="bold"
+				android:textSize="40sp"
+				android:id="@+id/tvTotalAmountDesc"
+				android:text="@string/total_price"
+				android:layout_weight="1" />
+
+			<TextView
+				android:textStyle="bold"
+				android:textSize="40sp"
+				android:id="@+id/tvTotalAmountNum"
+				android:text="@string/zero_value"
+				android:gravity="right"
+				android:layout_width="match_parent"
+				android:layout_weight="1" />
+		</TableRow>
+
+	</TableLayout>
 
     <RadioGroup
         android:id="@+id/rgPercents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:orientation='horizontal'
+		android:orientation='vertical'
 		android:layout_centerHorizontal="true"
-		android:layout_below="@+id/etPreTip">
+		android:layout_below="@+id/tlFinalValues">
 
         <RadioButton
             android:id="@+id/rbPercent0"
@@ -54,10 +106,10 @@
             android:text="@string/radio_20" />
 
 		<RadioButton
-				android:id="@+id/rbCustom"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/radio_custom" />
+			android:id="@+id/rbCustom"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/radio_custom" />
 	</RadioGroup>
 
 	<LinearLayout
@@ -71,14 +123,14 @@
 			android:visibility="visible">
 
 		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/min_cust_percent"
-				android:id="@+id/tvMinPercent"
-				android:layout_gravity="center"
-				android:layout_weight="1"
-				android:gravity="right"
-				android:textColor="#939393" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/min_cust_percent"
+			android:id="@+id/tvMinPercent"
+			android:layout_gravity="center"
+			android:layout_weight="1"
+			android:gravity="right"
+			android:textColor="#939393" />
 
 		<SeekBar
 			android:id="@+id/sbPercent"
@@ -89,90 +141,22 @@
 			android:layout_weight="8" />
 
 		<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/max_cust_percent"
-				android:id="@+id/tvMaxPercent"
-				android:layout_gravity="center"
-				android:layout_weight="1"
-				android:textColor="#939393" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/max_cust_percent"
+			android:id="@+id/tvMaxPercent"
+			android:layout_gravity="center"
+			android:layout_weight="1"
+			android:textColor="#939393" />
 
 	</LinearLayout>
 
 	<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/percent_0"
-			android:id="@+id/tvSeekBarAmount"
-			android:layout_centerHorizontal="true"
-			android:layout_below="@+id/llSeekBar" />
-
-	<TableLayout
-			android:orientation="vertical"
-			android:id="@+id/tlFinalValues"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_centerHorizontal="true"
-			android:layout_below="@+id/llSeekBar"
-			android:layout_marginTop="50dp"
-			android:layout_alignParentRight="false"
-			>
-		<TableRow
-				android:paddingBottom="3dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" >
-
-			<TextView
-					android:textSize="25sp"
-					android:id="@+id/tvPreTipAmountDesc"
-					android:text="@string/pretip_amount" />
-
-			<TextView
-					android:textSize="25sp"
-					android:id="@+id/tvPreTipAmountNum"
-					android:minWidth="80dp"
-					android:gravity="right"
-					android:text="@string/zero_value"
-					/>
-		</TableRow>
-
-		<TableRow
-				android:paddingBottom="3dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" >
-
-			<TextView
-					android:textSize="25sp"
-					android:id="@+id/tvTipAmountDesc"
-					android:text="@string/tip_amount" />
-
-			<TextView
-					android:textSize="25sp"
-					android:id="@+id/tvTipAmountNum"
-					android:minWidth="80dp"
-					android:text="@string/zero_value"
-					android:gravity="right"
-					/>
-		</TableRow>
-
-		<TableRow
-				android:paddingBottom="3dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" >
-
-			<TextView
-					android:textSize="25sp"
-					android:id="@+id/tvTotalAmountDesc"
-					android:text="@string/total_price" />
-
-			<TextView
-					android:textSize="25sp"
-					android:id="@+id/tvTotalAmountNum"
-					android:text="@string/zero_value"
-					android:minWidth="80dp"
-					android:gravity="right"/>
-		</TableRow>
-
-	</TableLayout>
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/percent_0"
+		android:id="@+id/tvSeekBarAmount"
+		android:layout_centerHorizontal="true"
+		android:layout_below="@+id/llSeekBar" />
 
 </RelativeLayout>

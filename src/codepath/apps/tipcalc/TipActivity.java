@@ -1,22 +1,24 @@
 package codepath.apps.tipcalc;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import codepath.apps.util.DecimalDigitsInputFilter;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TipActivity extends Activity {
-	/** text of the radio button that chooses custom percentage */
-	static final String CUSTOM_PERCENTAGE = "Custom";
 	/** the path for the font used to show the final calculated values */
 	static final String FINAL_VALUES_FONT_PATH = "fonts/merchant.ttf";
 
@@ -28,14 +30,12 @@ public class TipActivity extends Activity {
 	TextView tvTipAmount;
 	/** text of the total amount */
 	TextView tvTotalAmount;
-	/** text of the pre-tip amount (different from the edit field which is displayed elsewhere) */
-	TextView tvPreTipAmount;
 	/** edit text field for the pre-tip amount */
 	EditText etPreTip;
 	/** radio group with the percentage options */
 	RadioGroup rgPercents;
-	/** radio button for the custom button option */
-	RadioButton rbCustom;
+	/** dictionary of radio button id to the associated TipRadioButtonData created for that rb */
+	Map<Integer, TipRadioButtonData> rbIdToTipRbData;
 	/** linear layout containing the seekbar and the text views on the two sides */
 	LinearLayout llSeekBar;
 	/** text view displaying the percent that the seekbar is at */
@@ -49,120 +49,126 @@ public class TipActivity extends Activity {
 		// init view elements
 		seekBar = (SeekBar) findViewById(R.id.sbPercent);
 		tvSeekBar = (TextView) findViewById(R.id.tvSeekBarAmount);
-		tvPreTipAmount = (TextView) findViewById(R.id.tvPreTipAmountNum);
 		tvTipAmount = (TextView) findViewById(R.id.tvTipAmountNum);
 		tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmountNum);
 		etPreTip = (EditText) findViewById(R.id.etPreTip);
 		rgPercents = (RadioGroup) findViewById(R.id.rgPercents);
-		rbCustom = (RadioButton) findViewById(R.id.rbCustom);
 		llSeekBar = (LinearLayout) findViewById(R.id.llSeekBar);
 		tvSeekBarAmount = (TextView) findViewById(R.id.tvSeekBarAmount);
+		rbIdToTipRbData = new HashMap<Integer, TipRadioButtonData>();
+		rbIdToTipRbData.put(R.id.rbPercent0, new TipRadioButtonData((RadioButton) findViewById(R.id.rbPercent0)));
+		rbIdToTipRbData.put(R.id.rbPercent1, new TipRadioButtonData((RadioButton) findViewById(R.id.rbPercent1)));
+		rbIdToTipRbData.put(R.id.rbPercent2, new TipRadioButtonData((RadioButton) findViewById(R.id.rbPercent2)));
+		rbIdToTipRbData.put(R.id.rbCustom, new TipRadioButtonData((RadioButton) findViewById(R.id.rbCustom)));
 
 		// show/hide seekbar elements
-		toggleSeekBarElts(rgPercents.getCheckedRadioButtonId() == rbCustom.getId());
+		toggleSeekBarElts(rgPercents.getCheckedRadioButtonId() == R.id.rbCustom);
 
 		// set up listeners
 		setupSeekBarListener();
-		setupPreTipTextField();
+		setupPreTipEditField();
 		setRadioGroupListener();
 
-		// set text face
+		// set text properties
 		setupTextTypeFace();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.tip, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
+		resetNumbers();
 	}
 
 	/** set up listeners for when the seek bar moves */
 	private void setupSeekBarListener() {
-		seekBar.setOnSeekBarChangeListener(
-			new SeekBar.OnSeekBarChangeListener() {
-				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-					// set text to match the progress
-					tvSeekBar.setText(progress + "%");
-					// show tip value when seeking has stopped
-					calculateAndDisplayTip();
-				}
-
-				public void onStopTrackingTouch(SeekBar seekBar) {}
-				public void onStartTrackingTouch(SeekBar seekBar) {}
+		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				// set text to match the progress
+				tvSeekBar.setText(progress + "%");
+				// show tip value when seeking has stopped
+				calculateAndDisplayTip();
 			}
-		);
+
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				hideKeyboard(seekBar);
+			}
+
+			public void onStopTrackingTouch(SeekBar seekBar) {
+			}
+		});
 	}
 
 	/** set radio group listeners */
 	private void setRadioGroupListener() {
-		rgPercents.setOnCheckedChangeListener(
-			new RadioGroup.OnCheckedChangeListener() {
-				public void onCheckedChanged(RadioGroup group, int checkedId) {
-					toggleSeekBarElts(checkedId == rbCustom.getId());
-					calculateAndDisplayTip();
-				}
+		rgPercents.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				hideKeyboard(group);
+				toggleSeekBarElts(checkedId == R.id.rbCustom);
+				calculateAndDisplayTip();
 			}
-		);
+		});
 	}
 
 	/** set up listeners/filters for when the user changes the pre-tip amount */
-	private void setupPreTipTextField() {
-		etPreTip.addTextChangedListener(
-			new TextWatcher() {
-				public void onTextChanged(CharSequence s, int start, int before, int count) {
-					calculateAndDisplayTip();
-				}
-
-				public void afterTextChanged(Editable s) {}
-				public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	private void setupPreTipEditField() {
+		etPreTip.addTextChangedListener(new TextWatcher() {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				calculateAndDisplayTip();
 			}
-		);
-		etPreTip.setFilters(
-			new InputFilter[] { new DecimalDigitsInputFilter(10, 2) }
-		);
+
+			public void afterTextChanged(Editable s) {
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+		});
+		etPreTip.setFilters( new InputFilter[] { new DecimalDigitsInputFilter(10, 2) } );
+		etPreTip.setOnTouchListener(new View.OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent e) {
+				resetNumbers();
+				return false;
+			}
+		});
 	}
 
 	/** calculates the tip and displays it on screen */
 	private void calculateAndDisplayTip() {
 		String preTipString = etPreTip.getText().toString();
 		if (preTipString.length() > 0) {
-			double percent;
-			String percentString = getParsedSelectedRBtnText();
-			if (percentString.equals(CUSTOM_PERCENTAGE)) {
-				percent = seekBar.getProgress() * .01;
+			double tipDecimal;
+			TipRadioButtonData selectedTipData = getSelectedTipData();
+			if (selectedTipData.isCustom) {
+				tipDecimal = seekBar.getProgress() * .01;
 			} else {
-				percent = Double.parseDouble(percentString) * .01;
+				tipDecimal = selectedTipData.getTipValueDecimal();
 			}
 
 			double preTipAmount = Double.parseDouble(preTipString);
-			double tipValue = percent * preTipAmount;
+			double tipValue = tipDecimal * preTipAmount;
 			double totalValue = preTipAmount + tipValue;
 
 			DecimalFormat df = new DecimalFormat("#.00");
-			tvPreTipAmount.setText(df.format(preTipAmount));
 			tvTipAmount.setText(df.format(tipValue));
 			tvTotalAmount.setText(df.format(totalValue));
+
+			for (TipRadioButtonData data : rbIdToTipRbData.values()) {
+				String dfString = df.format(data.calculateTip(preTipAmount));
+				data.formatText(dfString);
+			}
 		}
 	}
 
+	/** reset all the numbers */
+	private void resetNumbers() {
+		Resources res = getResources();
+		String zeroValue = res.getString(R.string.zero_value);
+		tvTipAmount.setText(zeroValue);
+		tvTotalAmount.setText(zeroValue);
+		for (TipRadioButtonData data : rbIdToTipRbData.values()) {
+			data.formatText(zeroValue);
+		}
+		etPreTip.setText("");
+	}
+
 	/** @return the percent portion of the selected button's text */
-	private String getParsedSelectedRBtnText() {
+	private TipRadioButtonData getSelectedTipData() {
 		int radioId = rgPercents.getCheckedRadioButtonId();
-		RadioButton radioButton = (RadioButton) findViewById(radioId);
-		return radioButton.getText().toString().split("%")[0];
+		return rbIdToTipRbData.get(radioId);
 	}
 
 	/** Toggles visible/enable properties of all elements associated with the seek bar */
@@ -173,14 +179,23 @@ public class TipActivity extends Activity {
 		tvSeekBarAmount.setVisibility(visibility);
 	}
 
+	/** set custom typeface for all text */
 	private void setupTextTypeFace() {
 		Typeface face= Typeface.createFromAsset(getAssets(), FINAL_VALUES_FONT_PATH);
 
-		tvPreTipAmount.setTypeface(face);
 		tvTipAmount.setTypeface(face);
 		tvTotalAmount.setTypeface(face);
+		etPreTip.setTypeface(face);
 		((TextView) findViewById(R.id.tvPreTipAmountDesc)).setTypeface(face);
 		((TextView) findViewById(R.id.tvTipAmountDesc)).setTypeface(face);
 		((TextView) findViewById(R.id.tvTotalAmountDesc)).setTypeface(face);
+		for (TipRadioButtonData data : rbIdToTipRbData.values()) {
+			data.setTypeface(face);
+		}
+	}
+
+	/** hides the software keyboard */
+	private void hideKeyboard(View v) {
+		((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(v.getWindowToken(), 0);
 	}
 }
