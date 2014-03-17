@@ -77,7 +77,8 @@
 				android:id="@+id/tvMinPercent"
 				android:layout_gravity="center"
 				android:layout_weight="1"
-				android:gravity="right"/>
+				android:gravity="right"
+				android:textColor="#939393" />
 
 		<SeekBar
 			android:id="@+id/sbPercent"
@@ -93,7 +94,8 @@
 				android:text="@string/max_cust_percent"
 				android:id="@+id/tvMaxPercent"
 				android:layout_gravity="center"
-				android:layout_weight="1" />
+				android:layout_weight="1"
+				android:textColor="#939393" />
 
 	</LinearLayout>
 
@@ -128,6 +130,7 @@
 					android:minWidth="80dp"
 					android:layout_marginRight="10dp"
 					android:gravity="right"
+					android:text="@string/zero_value"
 					/>
 		</TableRow>
 

@@ -7,6 +7,7 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.*;
 import codepath.apps.util.DecimalDigitsInputFilter;
 
@@ -30,6 +31,12 @@ public class TipActivity extends Activity {
 	EditText etPreTip;
 	/** radio group with the percentage options */
 	RadioGroup rgPercents;
+	/** radio button for the custom button option */
+	RadioButton rbCustom;
+	/** linear layout containing the seekbar and the text views on the two sides */
+	LinearLayout llSeekBar;
+	/** text view displaying the percent that the seekbar is at */
+	TextView tvSeekBarAmount;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,12 @@ public class TipActivity extends Activity {
 		tvTotalAmount = (TextView) findViewById(R.id.tvTotalAmountNum);
 		etPreTip = (EditText) findViewById(R.id.etPreTip);
 		rgPercents = (RadioGroup) findViewById(R.id.rgPercents);
+		rbCustom = (RadioButton) findViewById(R.id.rbCustom);
+		llSeekBar = (LinearLayout) findViewById(R.id.llSeekBar);
+		tvSeekBarAmount = (TextView) findViewById(R.id.tvSeekBarAmount);
+
+		// show/hide seekbar elements
+		toggleSeekBarElts(rgPercents.getCheckedRadioButtonId() == rbCustom.getId());
 
 		// set up listeners
 		setupSeekBarListener();
@@ -92,6 +105,7 @@ public class TipActivity extends Activity {
 		rgPercents.setOnCheckedChangeListener(
 			new RadioGroup.OnCheckedChangeListener() {
 				public void onCheckedChanged(RadioGroup group, int checkedId) {
+					toggleSeekBarElts(checkedId == rbCustom.getId());
 					calculateAndDisplayTip();
 				}
 			}
@@ -120,9 +134,7 @@ public class TipActivity extends Activity {
 		String preTipString = etPreTip.getText().toString();
 		if (preTipString.length() > 0) {
 			double percent;
-			int radioId = rgPercents.getCheckedRadioButtonId();
-			RadioButton radioButton = (RadioButton) findViewById(radioId);
-			String percentString = radioButton.getText().toString().split("%")[0];
+			String percentString = getParsedSelectedRBtnText();
 			if (percentString.equals(CUSTOM_PERCENTAGE)) {
 				percent = seekBar.getProgress() * .01;
 			} else {
@@ -138,5 +150,19 @@ public class TipActivity extends Activity {
 			tvTipAmount.setText(df.format(tipValue));
 			tvTotalAmount.setText(df.format(totalValue));
 		}
+	}
+
+	/** @return the percent portion of the selected button's text */
+	private String getParsedSelectedRBtnText() {
+		int radioId = rgPercents.getCheckedRadioButtonId();
+		RadioButton radioButton = (RadioButton) findViewById(radioId);
+		return radioButton.getText().toString().split("%")[0];
+	}
+
+	private void toggleSeekBarElts(Boolean enable) {
+		int visibility = enable ? View.VISIBLE : View.INVISIBLE;
+		llSeekBar.setEnabled(enable);
+		llSeekBar.setVisibility(visibility);
+		tvSeekBarAmount.setVisibility(visibility);
 	}
 }
