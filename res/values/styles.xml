@@ -14,7 +14,7 @@
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="android:textSize">35sp</item>
+        <item name="android:textSize">32sp</item>
 		<item name="android:textStyle">bold</item>
     </style>
 

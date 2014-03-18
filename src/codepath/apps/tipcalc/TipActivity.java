@@ -3,6 +3,7 @@ package codepath.apps.tipcalc;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -70,6 +71,7 @@ public class TipActivity extends Activity {
 		setRadioGroupListener();
 
 		// set text properties
+		tvTotalAmount.setPaintFlags(tvTotalAmount.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 		setupTextTypeFace();
 		resetNumbers();
 	}
@@ -189,6 +191,9 @@ public class TipActivity extends Activity {
 		((TextView) findViewById(R.id.tvPreTipAmountDesc)).setTypeface(face);
 		((TextView) findViewById(R.id.tvTipAmountDesc)).setTypeface(face);
 		((TextView) findViewById(R.id.tvTotalAmountDesc)).setTypeface(face);
+		((TextView) findViewById(R.id.tvMinPercent)).setTypeface(face);
+		((TextView) findViewById(R.id.tvMaxPercent)).setTypeface(face);
+		tvSeekBar.setTypeface(face);
 		for (TipRadioButtonData data : rbIdToTipRbData.values()) {
 			data.setTypeface(face);
 		}
