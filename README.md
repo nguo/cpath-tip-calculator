@@ -5,11 +5,11 @@ TheCodePath: Tip Calculator
 
 Preview:
 
-![Alt text](assets/sample 1.png "Entering the amount.")
+![Alt text](assets/sample1.png "Entering the amount.")
 
-![Alt text](assets/sample 2.png "Editing custom percentage.")
+![Alt text](assets/sample2.png "Editing custom percentage.")
 
-![Alt text](assets/sample 3.png "Final calculated look.")
+![Alt text](assets/sample3.png "Final calculated look.")
 
 Completed Stories:
 * User is displayed the tip of specified percentage for specified entered amount
